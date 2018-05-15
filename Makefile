@@ -7,7 +7,7 @@ debug:
 publish: lint;
 	npm publish
 
-build: lint;
+build: lint test;
 	npm run build	
 
 test:
