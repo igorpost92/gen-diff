@@ -4,7 +4,7 @@ install:
 debug:
 	npm run compile
 
-publish: lint;
+publish: build;
 	npm publish
 
 build: lint test;

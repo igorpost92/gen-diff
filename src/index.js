@@ -4,13 +4,13 @@ import _ from 'lodash';
 import yaml from 'js-yaml';
 
 const parsers = {
-  json: JSON.parse,
-  yml: yaml.safeLoad,
+  '.json': JSON.parse,
+  '.yml': yaml.safeLoad,
 };
 
 const parse = (filepath) => {
   const data = fs.readFileSync(filepath, 'utf-8');
-  const extension = path.extname(filepath).split('.').join('');
+  const extension = path.extname(filepath);
   const parser = parsers[extension];
   return parser(data);
 };

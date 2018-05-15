@@ -1,6 +1,6 @@
 {
   "name": "post_hexlet-gendiff",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Hexlet - Backend JS project 2",
   "main": "index.js",
   "scripts": {
