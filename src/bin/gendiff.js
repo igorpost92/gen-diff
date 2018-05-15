@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import commander from 'commander';
 import { version } from '../../package.json';
+import diff from '..';
 
 commander
   .version(version)
@@ -8,7 +9,7 @@ commander
   .description('Compares two configuration files and shows a difference.')
   .option('-f, --format [type]', 'output format')
   .action((first, second) => {
-    console.log(`first ${first}`);
-    console.log(`second ${second}`);
+    const difference = diff(first, second);
+    console.log(difference);
   })
   .parse(process.argv);

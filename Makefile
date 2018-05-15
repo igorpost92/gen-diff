@@ -10,5 +10,8 @@ publish: lint;
 build: lint;
 	npm run build	
 
+test:
+	npm test
+
 lint:
 	npm run eslint .
