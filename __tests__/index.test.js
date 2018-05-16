@@ -2,19 +2,22 @@ import path from 'path';
 import fs from 'fs';
 import diff from '../src/';
 
-const folder = path.join(__dirname, '__fixtures__');
+const getFixturePath = filepath => path.join(__dirname, '__fixtures__', filepath);
 
-const resultPath = path.join(folder, 'result.txt');
-const result = fs.readFileSync(resultPath, 'utf-8');
+let result;
+
+beforeAll(() => {
+  result = fs.readFileSync(getFixturePath('result.txt'), 'utf-8');
+});
 
 test('JSON', () => {
-  const before = path.join(folder, 'before.json');
-  const after = path.join(folder, 'after.json');
+  const before = getFixturePath('before.json');
+  const after = getFixturePath('after.json');
   expect(diff(before, after)).toBe(result);
 });
 
 test('YML', () => {
-  const before = path.join(folder, 'before.yml');
-  const after = path.join(folder, 'after.yml');
+  const before = getFixturePath('before.yml');
+  const after = getFixturePath('after.yml');
   expect(diff(before, after)).toBe(result);
 });

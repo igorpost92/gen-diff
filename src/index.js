@@ -11,8 +11,8 @@ const parsers = {
 const parse = (filepath) => {
   const data = fs.readFileSync(filepath, 'utf-8');
   const extension = path.extname(filepath);
-  const parser = parsers[extension];
-  return parser(data);
+  const perform = parsers[extension];
+  return perform(data);
 };
 
 const format = {
@@ -29,23 +29,22 @@ const diff = (first, second) => {
   const keys1 = Object.keys(data1);
   const keys2 = Object.keys(data2);
 
-  const intersections = _.intersection(keys1, keys2);
+  const keys = _.union(keys1, keys2).map((key) => {
+    const value1 = data1[key];
+    const value2 = data2[key];
 
-  const deleted = _.difference(keys1, keys2)
-    .map(key => format.deleted(key, data1[key]));
+    if (_.has(data1, key) && _.has(data2, key)) {
+      if (value1 === value2) {
+        return format.same(key, value1);
+      }
+      return format.changed(key, value2, value1);
+    } else if (_.has(data1, key)) {
+      return format.deleted(key, value1);
+    }
+    return format.added(key, value2);
+  });
 
-  const added = _.difference(keys2, keys1)
-    .map(key => format.added(key, data2[key]));
-
-  const same = intersections
-    .filter(key => data1[key] === data2[key])
-    .map(key => format.same(key, data1[key]));
-
-  const changed = intersections
-    .filter(key => data1[key] !== data2[key])
-    .map(key => format.changed(key, data2[key], data1[key]));
-
-  const result = [...same, ...changed, ...added, ...deleted].join('\n');
+  const result = keys.join('\n');
   return `{\n${result}\n}`;
 };
 
