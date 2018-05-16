@@ -1,6 +1,6 @@
 {
   "name": "post_hexlet-gendiff",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Hexlet - Backend JS project 2",
   "main": "index.js",
   "scripts": {
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "commander": "^2.15.1",
+    "ini": "^1.3.5",
     "js-yaml": "^3.11.0",
     "lodash": "^4.17.10"
   }

@@ -21,3 +21,9 @@ test('YML', () => {
   const after = getFixturePath('after.yml');
   expect(diff(before, after)).toBe(result);
 });
+
+test('INI', () => {
+  const before = getFixturePath('before.ini');
+  const after = getFixturePath('after.ini');
+  expect(diff(before, after)).toBe(result);
+});

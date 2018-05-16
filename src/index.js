@@ -2,10 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import yaml from 'js-yaml';
+import ini from 'ini';
 
 const parsers = {
   '.json': JSON.parse,
   '.yml': yaml.safeLoad,
+  '.ini': ini.parse,
 };
 
 const parse = (filepath) => {
