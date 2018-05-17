@@ -1,53 +1,130 @@
-import fs from 'fs';
-import path from 'path';
 import _ from 'lodash';
-import yaml from 'js-yaml';
-import ini from 'ini';
+import read from './read';
 
-const parsers = {
-  '.json': JSON.parse,
-  '.yml': yaml.safeLoad,
-  '.ini': ini.parse,
+const statuses = {
+  same: 1, changed: 2, added: 3, deleted: 4, nested: 5,
 };
 
-const parse = (filepath) => {
-  const data = fs.readFileSync(filepath, 'utf-8');
-  const extension = path.extname(filepath);
-  const perform = parsers[extension];
-  return perform(data);
+const makeTree = (data1, data2) => {
+  const makeTemplate = () => ({
+    name: '',
+    status: '',
+    children: [],
+    left: undefined,
+    right: undefined,
+  });
+
+  const saveValue = value => (value instanceof Object ? Object.assign({}, value) : value);
+
+  const iter = (obj1, obj2) => {
+    const keys = _.union(Object.keys(obj1), Object.keys(obj2));
+
+    const ast = keys.reduce((acc, key) => {
+      const value1 = obj1[key];
+      const value2 = obj2[key];
+
+      const node = makeTemplate();
+      node.name = key;
+
+      if (_.has(obj1, key) && _.has(obj2, key)) {
+        if (value1 instanceof Object && value2 instanceof Object) {
+          node.status = statuses.nested;
+          node.children = iter(value1, value2);
+        } else if (value1 === value2) {
+          node.status = statuses.same;
+          node.left = value1;
+        } else {
+          node.status = statuses.changed;
+          node.left = saveValue(value1);
+          node.right = saveValue(value2);
+        }
+      } else if (_.has(obj1, key)) {
+        node.status = statuses.deleted;
+        node.left = saveValue(value1);
+      } else {
+        node.status = statuses.added;
+        node.right = saveValue(value2);
+      }
+
+      return [...acc, node];
+    }, []);
+
+    return ast;
+  };
+
+  const tree = makeTemplate();
+  tree.status = statuses.nested;
+  tree.children = iter(data1, data2);
+  return tree;
 };
 
-const format = {
-  added: (key, value) => `  + ${key}: ${value}`,
-  deleted: (key, value) => `  - ${key}: ${value}`,
-  same: (key, value) => `    ${key}: ${value}`,
-  changed: (key, newValue, old) => `${format.added(key, newValue)}\n${format.deleted(key, old)}`,
+const render = (tree) => {
+  const makeTab = level => ' '.repeat(level < 0 ? 0 : level * 4);
+
+  const format = (tabSize, prefix, name, value) => {
+    const valueToString = (val, depth) => {
+      if (val instanceof Object) {
+        const keys = Object.keys(val);
+        const res = keys.reduce((acc, key) => {
+          const temp = valueToString(val[key], depth + 1);
+          return [...acc, format(depth + 1, '', key, temp)];
+        }, []);
+        return ['{', ...res, `${makeTab(depth)}}`].join('\n');
+      }
+
+      return val;
+    };
+
+    const val = valueToString(value, tabSize + 1);
+    const res = `${makeTab(tabSize)}${prefix}${name}: ${val}`;
+    return res;
+  };
+
+  const stringify = (node, depth) => {
+    const res = [];
+    if (node.status === statuses.same) {
+      res.push(format(depth, '    ', node.name, node.left));
+    } else if (node.status === statuses.changed) {
+      res.push(format(depth, '  - ', node.name, node.left));
+      res.push(format(depth, '  + ', node.name, node.right));
+    } else if (node.status === statuses.added) {
+      res.push(format(depth, '  + ', node.name, node.right));
+    } else if (node.status === statuses.deleted) {
+      res.push(format(depth, '  - ', node.name, node.left));
+    }
+    return res;
+  };
+
+  const traversal = (node, depth) => {
+    const res = [];
+    if (node.status === statuses.nested) {
+      const nested = node.children.reduce((acc, child) =>
+        [...acc, ...traversal(child, depth + 1)], []);
+
+      if (depth === -1) {
+        res.push('{');
+      } else {
+        res.push(format(depth, '    ', node.name, '{'));
+      }
+
+      res.push(...nested);
+      res.push(`${makeTab(depth + 1)}}`);
+      return res;
+    }
+
+    return stringify(node, depth);
+  };
+
+  return traversal(tree, -1).join('\n');
 };
 
 const diff = (first, second) => {
-  const data1 = parse(first);
-  const data2 = parse(second);
+  const data1 = read(first);
+  const data2 = read(second);
 
-  const keys1 = Object.keys(data1);
-  const keys2 = Object.keys(data2);
-
-  const keys = _.union(keys1, keys2).map((key) => {
-    const value1 = data1[key];
-    const value2 = data2[key];
-
-    if (_.has(data1, key) && _.has(data2, key)) {
-      if (value1 === value2) {
-        return format.same(key, value1);
-      }
-      return format.changed(key, value2, value1);
-    } else if (_.has(data1, key)) {
-      return format.deleted(key, value1);
-    }
-    return format.added(key, value2);
-  });
-
-  const result = keys.join('\n');
-  return `{\n${result}\n}`;
+  const tree = makeTree(data1, data2);
+  const result = render(tree);
+  return result;
 };
 
 export default diff;
