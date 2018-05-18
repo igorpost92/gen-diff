@@ -1,11 +1,11 @@
 import structured from './structured';
 import plain from './plain';
 
-const statuses = ({
+const stringify = ({
   structured,
   plain,
 });
 
-const render = (tree, format) => statuses[format].nested(tree);
+const render = (tree, format) => stringify[format](tree);
 
 export default render;

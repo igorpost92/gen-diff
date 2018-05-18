@@ -53,7 +53,8 @@ const makeTree = (data1, data2) => {
 
 const diff = (first, second, format = defaultFormat) => {
   if (!formats.includes(format)) {
-    throw new Error('unknown format');
+    console.log(`Unknown format. Available formats: ${formats.join(', ')}`);
+    process.exit(1);
   }
 
   const data1 = read(first);

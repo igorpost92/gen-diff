@@ -13,3 +13,7 @@ programm
     console.log(difference);
   })
   .parse(process.argv);
+
+if (!programm.args.length) {
+  programm.help();
+}

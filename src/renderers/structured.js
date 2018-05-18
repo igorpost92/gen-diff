@@ -29,4 +29,5 @@ const statuses = {
   },
 };
 
-export default statuses;
+const render = tree => statuses.nested(tree);
+export default render;
