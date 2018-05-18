@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import programm from 'commander';
 import { version } from '../../package.json';
-import diff, { defaultFormat } from '..';
+import diff from '..';
+import { defaultFormat } from '../renderers';
 
 programm
   .version(version)

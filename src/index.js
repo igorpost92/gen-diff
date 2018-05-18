@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import read from './read';
-import render from './renderers';
-
-const formats = ['structured', 'plain'];
-export const defaultFormat = formats[0];
+import render, { formats, defaultFormat } from './renderers';
 
 const statuses = {
   same: 'same',
