@@ -19,9 +19,9 @@ const statuses = {
   removed: ({ name, oldValue }, depth) => stringify(depth, name, oldValue, '-'),
   added: ({ name, newValue }, depth) => stringify(depth, name, newValue, '+'),
   updated: (node, depth) => [statuses.removed(node, depth), statuses.added(node, depth)].join('\n'),
-  nested: ({ name, children }, depth, traversal) => {
+  nested: ({ name, children }, depth) => {
     const nested = children.reduce((acc, child) =>
-      [...acc, traversal(child, depth + 1)], []);
+      [...acc, statuses[child.status](child, depth + 1)], []);
 
     const start = depth === 0 ? '{' : stringify(depth, name, '{');
     const res = [start, ...nested, `${makeTab(depth)}}`];
@@ -29,9 +29,6 @@ const statuses = {
   },
 };
 
-const render = (tree) => {
-  const traversal = (node, depth = 0) => statuses[node.status](node, depth, traversal);
-  return traversal(tree);
-};
+const render = tree => statuses.nested(tree, 0);
 
 export default render;
