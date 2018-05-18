@@ -30,11 +30,7 @@ const statuses = {
 };
 
 const render = (tree) => {
-  const traversal = (node, depth = 0) => {
-    const t = statuses[node.status](node, depth, traversal);
-    return t;
-  };
-
+  const traversal = (node, depth = 0) => statuses[node.status](node, depth, traversal);
   return traversal(tree);
 };
 
