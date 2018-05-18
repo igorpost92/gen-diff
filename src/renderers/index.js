@@ -1,46 +1,41 @@
-import statuses from '../statuses';
-
 const makeTab = level => ' '.repeat(level < 0 ? 0 : level * 4);
 
-const format = (tabSize, prefix, name, value) => {
-  const valueToString = (val, depth) => {
-    if (val instanceof Object) {
-      const keys = Object.keys(val);
-      const res = keys.map(key => format(depth + 1, '', key, valueToString(val[key], depth + 1), []));
-      return ['{', ...res, `${makeTab(depth)}}`].join('\n');
-    }
+const stringify = (tabSize, name, value, prefix = '') => {
+  const indent = prefix ? `${makeTab(tabSize - 1)}  ${prefix} ` : makeTab(tabSize);
 
-    return val;
+  if (!(value instanceof Object)) {
+    return `${indent}${name}: ${value}`;
+  }
+
+  const keys = Object.keys(value);
+  const nested = keys.map(key => stringify(tabSize + 1, key, value[key]));
+
+  const res = [`${indent}${name}: {`, ...nested, `${makeTab(tabSize)}}`];
+  return res.join('\n');
+};
+
+const format = {
+  same: ({ name, oldValue }, depth) => stringify(depth, name, oldValue),
+  deleted: ({ name, oldValue }, depth) => stringify(depth, name, oldValue, '-'),
+  added: ({ name, newValue }, depth) => stringify(depth, name, newValue, '+'),
+  changed: (node, depth) => [format.deleted(node, depth), format.added(node, depth)].join('\n'),
+  nested: ({ name, children }, depth, traversal) => {
+    const nested = children.reduce((acc, child) =>
+      [...acc, traversal(child, depth + 1)], []);
+
+    const start = depth === 0 ? '{' : stringify(depth, name, '{');
+    const res = [start, ...nested, `${makeTab(depth)}}`];
+    return res.join('\n');
+  },
+};
+
+const render = (tree) => {
+  const traversal = (node, depth = 0) => {
+    const t = format[node.status](node, depth, traversal);
+    return t;
   };
 
-  const val = valueToString(value, tabSize + 1);
-  const res = `${makeTab(tabSize)}${prefix}${name}: ${val}`;
-  return res;
+  return traversal(tree);
 };
-
-const stringify = (node, depth) => {
-  if (node.status === statuses.same) {
-    return format(depth + 1, '', node.name, node.oldValue);
-  } else if (node.status === statuses.changed) {
-    return `${format(depth, '  - ', node.name, node.oldValue)}\n${format(depth, '  + ', node.name, node.newValue)}`;
-  } else if (node.status === statuses.added) {
-    return format(depth, '  + ', node.name, node.newValue);
-  }
-  return format(depth, '  - ', node.name, node.oldValue);
-};
-
-const traversal = (node, depth) => {
-  if (node.status === statuses.nested) {
-    const nested = node.children.reduce((acc, child) =>
-      [...acc, ...traversal(child, depth + 1)], []);
-
-    const start = depth === -1 ? '{' : format(depth + 1, '', node.name, '{');
-    return [start, ...nested, `${makeTab(depth + 1)}}`];
-  }
-
-  return [stringify(node, depth)];
-};
-
-const render = tree => traversal(tree, -1).join('\n');
 
 export default render;
