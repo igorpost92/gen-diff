@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import read from './read';
 import statuses from './statuses';
-import render from './render';
+import render from './renderers';
 
 const makeTree = (data1, data2) => {
   const makeTemplate = (name, status, children, oldValue, newValue) => ({
