@@ -4,6 +4,11 @@ import { version } from '../../package.json';
 import genDiff from '..';
 import { defaultFormat } from '../renderers';
 
+process.on('uncaughtException', (err) => {
+  console.error(err.message);
+  process.exitCode = 1;
+});
+
 programm
   .version(version)
   .arguments('<firstConfig> <secondConfig>')

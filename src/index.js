@@ -46,17 +46,16 @@ const makeTree = (data1, data2) => {
 };
 
 const genDiff = (first, second, format = defaultFormat) => {
+  if (!formats.includes(format)) {
+    throw new Error('Unknown format');
+  }
+
   const readAndParse = (filepath) => {
     const data = fs.readFileSync(filepath, 'utf-8');
     const extension = path.extname(filepath);
     const parse = parsers[extension];
     return parse(data);
   };
-
-  if (!formats.includes(format)) {
-    console.log(`Unknown format. Available formats: ${formats.join(', ')}`);
-    process.exit(1);
-  }
 
   const data1 = readAndParse(first);
   const data2 = readAndParse(second);
