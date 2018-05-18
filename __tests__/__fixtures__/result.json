@@ -6,19 +6,16 @@
       {
         "name": "setting1",
         "status": "same",
-        "children": [],
         "oldValue": "Value 1"
       },
       {
         "name": "setting2",
         "status": "removed",
-        "children": [],
         "oldValue": "200"
       },
       {
         "name": "setting3",
         "status": "updated",
-        "children": [],
         "oldValue": true,
         "newValue": {
           "key": "value"
@@ -31,13 +28,11 @@
           {
             "name": "key",
             "status": "same",
-            "children": [],
             "oldValue": "value"
           },
           {
             "name": "ops",
             "status": "added",
-            "children": [],
             "newValue": "vops"
           }
         ]
@@ -45,13 +40,11 @@
       {
         "name": "setting4",
         "status": "added",
-        "children": [],
         "newValue": "blah blah"
       },
       {
         "name": "setting5",
         "status": "added",
-        "children": [],
         "newValue": {
           "key5": "value5"
         }
@@ -65,20 +58,17 @@
       {
         "name": "baz",
         "status": "updated",
-        "children": [],
         "oldValue": "bas",
         "newValue": "bars"
       },
       {
         "name": "foo",
         "status": "same",
-        "children": [],
         "oldValue": "bar"
       },
       {
         "name": "nest",
         "status": "updated",
-        "children": [],
         "oldValue": {
           "key": "value"
         },
@@ -89,7 +79,6 @@
   {
     "name": "group2",
     "status": "removed",
-    "children": [],
     "oldValue": {
       "abc": "12345"
     }
@@ -97,7 +86,6 @@
   {
     "name": "group3",
     "status": "added",
-    "children": [],
     "newValue": {
       "fee": "100500"
     }

@@ -1,6 +1,3 @@
-const render = (tree) => {
-  const t = JSON.stringify(tree.children, null, '  ');
-  return t;
-};
+const render = tree => JSON.stringify(tree.children, null, '  ');
 
 export default render;
