@@ -65,8 +65,3 @@ const diff = (first, second, format = defaultFormat) => {
 };
 
 export default diff;
-
-const b = '/Users/igor/Documents/Dev/Hexlet/project2/__tests__/__fixtures__/before.ini';
-const a = '/Users/igor/Documents/Dev/Hexlet/project2/__tests__/__fixtures__/after.ini';
-
-console.log(diff(b, a, 'plain'));
