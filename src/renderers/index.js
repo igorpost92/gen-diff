@@ -14,11 +14,11 @@ const stringify = (tabSize, name, value, prefix = '') => {
   return res.join('\n');
 };
 
-const format = {
+const statuses = {
   same: ({ name, oldValue }, depth) => stringify(depth, name, oldValue),
-  deleted: ({ name, oldValue }, depth) => stringify(depth, name, oldValue, '-'),
+  removed: ({ name, oldValue }, depth) => stringify(depth, name, oldValue, '-'),
   added: ({ name, newValue }, depth) => stringify(depth, name, newValue, '+'),
-  changed: (node, depth) => [format.deleted(node, depth), format.added(node, depth)].join('\n'),
+  updated: (node, depth) => [statuses.removed(node, depth), statuses.added(node, depth)].join('\n'),
   nested: ({ name, children }, depth, traversal) => {
     const nested = children.reduce((acc, child) =>
       [...acc, traversal(child, depth + 1)], []);
@@ -31,7 +31,7 @@ const format = {
 
 const render = (tree) => {
   const traversal = (node, depth = 0) => {
-    const t = format[node.status](node, depth, traversal);
+    const t = statuses[node.status](node, depth, traversal);
     return t;
   };
 

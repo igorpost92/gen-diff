@@ -1,7 +1,17 @@
 import _ from 'lodash';
 import read from './read';
-import statuses from './statuses';
 import render from './renderers';
+
+const formats = ['structured', 'plain'];
+export const defaultFormat = formats[0];
+
+const statuses = {
+  same: 'same',
+  updated: 'updated',
+  added: 'added',
+  removed: 'removed',
+  nested: 'nested',
+};
 
 const makeTree = (data1, data2) => {
   const makeTemplate = (name, status, children, oldValue, newValue) => ({
@@ -27,9 +37,9 @@ const makeTree = (data1, data2) => {
           return makeTemplate(key, statuses.same, [], value1);
         }
 
-        return makeTemplate(key, statuses.changed, [], value1, value2);
+        return makeTemplate(key, statuses.updated, [], value1, value2);
       } else if (_.has(obj1, key)) {
-        return makeTemplate(key, statuses.deleted, [], value1);
+        return makeTemplate(key, statuses.removed, [], value1);
       }
       return makeTemplate(key, statuses.added, [], undefined, value2);
     });
@@ -41,12 +51,16 @@ const makeTree = (data1, data2) => {
   return makeTemplate('', statuses.nested, children);
 };
 
-const diff = (first, second) => {
+const diff = (first, second, format = defaultFormat) => {
+  if (!formats.includes(format)) {
+    throw new Error('unknown format');
+  }
+
   const data1 = read(first);
   const data2 = read(second);
 
   const tree = makeTree(data1, data2);
-  const result = render(tree);
+  const result = render(tree, format);
   return result;
 };
 
