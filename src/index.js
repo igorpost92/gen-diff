@@ -37,10 +37,8 @@ const makeTree = (data1, data2) => {
     return ast;
   };
 
-  const tree = makeTemplate();
-  tree.status = statuses.nested;
-  tree.children = iter(data1, data2);
-  return tree;
+  const children = iter(data1, data2);
+  return makeTemplate('', statuses.nested, children);
 };
 
 const diff = (first, second) => {
