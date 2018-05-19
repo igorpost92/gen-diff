@@ -1,17 +1,20 @@
 install:
 	npm install
 
-debug:
+compile:
 	npm run compile
 
-publish: build;
+publish:
 	npm publish
 
-build: lint test;
+build:
 	npm run build	
 
 test:
 	npm test
+
+watch-test:
+	npm test -- --watchAll
 
 lint:
 	npm run eslint .
