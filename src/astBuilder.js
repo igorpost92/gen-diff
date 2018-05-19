@@ -12,24 +12,24 @@ const makeTree = (obj1, obj2) => {
     if (_.has(obj1, key) && _.has(obj2, key)) {
       if (oldValue instanceof Object && newValue instanceof Object) {
         const children = makeTree(oldValue, newValue);
-        const status = 'nested';
-        return { name, status, children };
+        const type = 'nested';
+        return { name, type, children };
       } else if (oldValue === newValue) {
-        const status = 'same';
-        return { name, status, oldValue };
+        const type = 'unchanged';
+        return { name, type, oldValue };
       }
 
-      const status = 'updated';
+      const type = 'updated';
       return {
-        name, status, oldValue, newValue,
+        name, type, oldValue, newValue,
       };
     } else if (_.has(obj1, key)) {
-      const status = 'removed';
-      return { name, status, oldValue };
+      const type = 'removed';
+      return { name, type, oldValue };
     }
 
-    const status = 'added';
-    return { name, status, newValue };
+    const type = 'added';
+    return { name, type, newValue };
   });
 };
 

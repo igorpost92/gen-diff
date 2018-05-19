@@ -1,21 +1,21 @@
 [
   {
     "name": "common",
-    "status": "nested",
+    "type": "nested",
     "children": [
       {
         "name": "setting1",
-        "status": "same",
+        "type": "unchanged",
         "oldValue": "Value 1"
       },
       {
         "name": "setting2",
-        "status": "removed",
+        "type": "removed",
         "oldValue": "200"
       },
       {
         "name": "setting3",
-        "status": "updated",
+        "type": "updated",
         "oldValue": true,
         "newValue": {
           "key": "value"
@@ -23,28 +23,28 @@
       },
       {
         "name": "setting6",
-        "status": "nested",
+        "type": "nested",
         "children": [
           {
             "name": "key",
-            "status": "same",
+            "type": "unchanged",
             "oldValue": "value"
           },
           {
             "name": "ops",
-            "status": "added",
+            "type": "added",
             "newValue": "vops"
           }
         ]
       },
       {
         "name": "setting4",
-        "status": "added",
+        "type": "added",
         "newValue": "blah blah"
       },
       {
         "name": "setting5",
-        "status": "added",
+        "type": "added",
         "newValue": {
           "key5": "value5"
         }
@@ -53,22 +53,22 @@
   },
   {
     "name": "group1",
-    "status": "nested",
+    "type": "nested",
     "children": [
       {
         "name": "baz",
-        "status": "updated",
+        "type": "updated",
         "oldValue": "bas",
         "newValue": "bars"
       },
       {
         "name": "foo",
-        "status": "same",
+        "type": "unchanged",
         "oldValue": "bar"
       },
       {
         "name": "nest",
-        "status": "updated",
+        "type": "updated",
         "oldValue": {
           "key": "value"
         },
@@ -78,14 +78,14 @@
   },
   {
     "name": "group2",
-    "status": "removed",
+    "type": "removed",
     "oldValue": {
       "abc": "12345"
     }
   },
   {
     "name": "group3",
-    "status": "added",
+    "type": "added",
     "newValue": {
       "fee": "100500"
     }

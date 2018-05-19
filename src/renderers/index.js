@@ -2,14 +2,12 @@ import structured from './structured';
 import plain from './plain';
 import json from './json';
 
-const stringify = ({
+const renderers = ({
   structured,
   plain,
   json,
 });
 
-export const formats = Object.keys(stringify);
+const getRenderer = format => renderers[format];
 
-const render = (tree, format) => stringify[format](tree);
-
-export default render;
+export default getRenderer;

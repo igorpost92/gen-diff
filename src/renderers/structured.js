@@ -16,11 +16,11 @@ const stringify = (tabSize, name, value, prefix = '') => {
   return res.join('\n');
 };
 
-const statuses = {
-  same: ({ name, oldValue }, depth) => stringify(depth, name, oldValue),
+const types = {
+  unchanged: ({ name, oldValue }, depth) => stringify(depth, name, oldValue),
   removed: ({ name, oldValue }, depth) => stringify(depth, name, oldValue, '-'),
   added: ({ name, newValue }, depth) => stringify(depth, name, newValue, '+'),
-  updated: (node, depth) => [statuses.removed(node, depth), statuses.added(node, depth)],
+  updated: (node, depth) => [types.removed(node, depth), types.added(node, depth)],
   nested: ({ name, children }, depth, traverse) => {
     const nested = traverse(children, depth + 1);
     const res = [stringify(depth, name, '{'), nested, `${makeTab(depth)}}`];
@@ -30,7 +30,7 @@ const statuses = {
 
 const render = (children, depth = 1) => {
   const temp = children.map((child) => {
-    const value = statuses[child.status](child, depth, render);
+    const value = types[child.type](child, depth, render);
     return value;
   });
   const res = flatten(temp);

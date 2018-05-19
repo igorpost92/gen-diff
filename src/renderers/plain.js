@@ -1,39 +1,35 @@
-const getFullName = (parents, name) => {
-  const parentsString = parents.filter(part => part);
-  return [...parentsString, name].join('.');
-};
+const getFullName = (ancestry, name) => [...ancestry, name].join('.');
 
 const valueToString = value => (value instanceof Object ? 'complex value' : `'${value}'`);
 
-const stringify = (parents, name, valueString) => {
-  const fullName = getFullName(parents, name);
+const stringify = (ancestry, name, valueString) => {
+  const fullName = getFullName(ancestry, name);
   return `Property '${fullName}' ${valueString}`;
 };
 
-const statuses = {
-  same: () => '',
-  removed: ({ name, status }, parents) => {
-    const valueString = `was ${status}`;
-    return stringify(parents, name, valueString);
+const types = {
+  removed: ({ name, type }, ancestry) => {
+    const valueString = `was ${type}`;
+    return stringify(ancestry, name, valueString);
   },
-  added: ({ name, status, newValue }, parents) => {
-    const valueString = `was ${status} with value: ${valueToString(newValue)}`;
-    return stringify(parents, name, valueString);
+  added: ({ name, type, newValue }, ancestry) => {
+    const valueString = `was ${type} with value: ${valueToString(newValue)}`;
+    return stringify(ancestry, name, valueString);
   },
-  updated: (node, parents) => {
-    const valueString = `was ${node.status}. From ${valueToString(node.oldValue)} to ${valueToString(node.newValue)}`;
-    return stringify(parents, node.name, valueString);
+  updated: (node, ancestry) => {
+    const valueString = `was ${node.type}. From ${valueToString(node.oldValue)} to ${valueToString(node.newValue)}`;
+    return stringify(ancestry, node.name, valueString);
   },
-  nested: ({ name, children }, parents, traverse) => {
-    const nested = traverse(children, [...parents, name]);
+  nested: ({ name, children }, ancestry, traverse) => {
+    const nested = traverse(children, [...ancestry, name]);
     return nested;
   },
 };
 
 const render = (children, ancestry = []) => {
   const res = children
-    .reduce((acc, child) => [...acc, statuses[child.status](child, ancestry, render)], [])
-    .filter(item => item !== '');
+    .filter(item => item.type !== 'unchanged')
+    .reduce((acc, child) => [...acc, types[child.type](child, ancestry, render)], []);
   return res.join('\n');
 };
 

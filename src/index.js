@@ -1,21 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 
-import parsers from './parsers';
+import getParser from './parsers';
 import makeTree from './astBuilder';
-import render, { formats } from './renderers';
+import getRenderer from './renderers';
 
-export const defaultFormat = formats[0];
+export const defaultFormat = 'structured';
 
 const readAndParse = (filepath) => {
   const data = fs.readFileSync(filepath, 'utf-8');
-  const extension = path.extname(filepath);
-  const parse = parsers[extension];
+  const ext = path.extname(filepath);
+  const parse = getParser(ext);
   return parse(data);
 };
 
 const genDiff = (first, second, format = defaultFormat) => {
-  if (!formats.includes(format)) {
+  const render = getRenderer(format);
+  if (!render) {
     throw new Error('Unknown format');
   }
 
@@ -23,7 +24,7 @@ const genDiff = (first, second, format = defaultFormat) => {
   const data2 = readAndParse(second);
 
   const tree = makeTree(data1, data2);
-  const result = render(tree, format);
+  const result = render(tree);
   return result;
 };
 
