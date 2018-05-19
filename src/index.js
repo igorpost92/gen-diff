@@ -15,36 +15,36 @@ const makeTree = (data1, data2) => {
       const oldValue = obj1[key];
       const newValue = obj2[key];
 
-      const template = { name: key };
+      const name = key;
 
       if (_.has(obj1, key) && _.has(obj2, key)) {
         if (oldValue instanceof Object && newValue instanceof Object) {
           const children = iter(oldValue, newValue);
           const status = 'nested';
-          return { ...template, status, children };
+          return { name, status, children };
         } else if (oldValue === newValue) {
           const status = 'same';
-          return { ...template, status, oldValue };
+          return { name, status, oldValue };
         }
 
         const status = 'updated';
         return {
-          ...template, status, oldValue, newValue,
+          name, status, oldValue, newValue,
         };
       } else if (_.has(obj1, key)) {
         const status = 'removed';
-        return { ...template, status, oldValue };
+        return { name, status, oldValue };
       }
 
       const status = 'added';
-      return { ...template, status, newValue };
+      return { name, status, newValue };
     });
 
     return ast;
   };
 
   const children = iter(data1, data2);
-  return { status: 'nested', children };
+  return { children };
 };
 
 const readAndParse = (filepath) => {
@@ -68,3 +68,8 @@ const genDiff = (first, second, format = defaultFormat) => {
 };
 
 export default genDiff;
+
+const b = '/Users/igor/Documents/Dev/Hexlet/project2/__tests__/__fixtures__/before.ini';
+const a = '/Users/igor/Documents/Dev/Hexlet/project2/__tests__/__fixtures__/after.ini';
+
+console.log(genDiff(b, a, 'json'));
