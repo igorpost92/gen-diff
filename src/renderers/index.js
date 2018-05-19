@@ -9,7 +9,6 @@ const stringify = ({
 });
 
 export const formats = Object.keys(stringify);
-export const defaultFormat = formats[0];
 
 const render = (tree, format) => stringify[format](tree);
 

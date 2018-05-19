@@ -24,15 +24,17 @@ const statuses = {
     const valueString = `was ${node.status}. From ${valueToString(node.oldValue)} to ${valueToString(node.newValue)}`;
     return stringify(parents, node.name, valueString);
   },
-  nested: ({ name, children }, parents = []) => {
-    const nested = children
-      .reduce((acc, child) => [...acc, statuses[child.status](child, [...parents, name])], [])
-      .filter(item => item !== '');
-
-    return nested.join('\n');
+  nested: ({ name, children }, parents, traverse) => {
+    const nested = traverse(children, [...parents, name]);
+    return nested;
   },
 };
 
-const render = tree => statuses.nested(tree);
+const render = (children, ancestry = []) => {
+  const res = children
+    .reduce((acc, child) => [...acc, statuses[child.status](child, ancestry, render)], [])
+    .filter(item => item !== '');
+  return res.join('\n');
+};
 
-export default render;
+export default tree => render(tree.children);

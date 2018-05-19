@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 import programm from 'commander';
 import { version } from '../../package.json';
-import genDiff from '..';
-import { defaultFormat } from '../renderers';
+import genDiff, { defaultFormat } from '..';
 
 process.on('uncaughtException', (err) => {
   console.error(err.message);

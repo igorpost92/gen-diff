@@ -3,7 +3,9 @@ import fs from 'fs';
 import path from 'path';
 
 import parsers from './parsers';
-import render, { formats, defaultFormat } from './renderers';
+import render, { formats } from './renderers';
+
+export const defaultFormat = formats[0];
 
 const makeTree = (data1, data2) => {
   const iter = (obj1, obj2) => {
@@ -45,17 +47,17 @@ const makeTree = (data1, data2) => {
   return { status: 'nested', children };
 };
 
+const readAndParse = (filepath) => {
+  const data = fs.readFileSync(filepath, 'utf-8');
+  const extension = path.extname(filepath);
+  const parse = parsers[extension];
+  return parse(data);
+};
+
 const genDiff = (first, second, format = defaultFormat) => {
   if (!formats.includes(format)) {
     throw new Error('Unknown format');
   }
-
-  const readAndParse = (filepath) => {
-    const data = fs.readFileSync(filepath, 'utf-8');
-    const extension = path.extname(filepath);
-    const parse = parsers[extension];
-    return parse(data);
-  };
 
   const data1 = readAndParse(first);
   const data2 = readAndParse(second);
