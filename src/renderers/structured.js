@@ -23,7 +23,8 @@ const types = {
   updated: (node, depth) => [types.removed(node, depth), types.added(node, depth)],
   nested: ({ name, children }, depth, traverse) => {
     const nested = traverse(children, depth + 1);
-    const res = [stringify(depth, name, '{'), nested, `${makeTab(depth)}}`];
+    const indent = makeTab(depth);
+    const res = `${indent}${name}: {\n${nested}\n${indent}}`;
     return res;
   },
 };
